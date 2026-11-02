@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "X / YouTube / GitHub 双语翻译",
   "version": "1.2.10",
-  "description": "为 X（Twitter）、YouTube 与 GitHub 提供实时双语对照翻译：无限滚动增量翻译、动态 DOM 复用感知、YouTube 字幕实时翻译；GitHub 界面文案走本地词典、技术术语保持原样。",
+  "description": "为 X、YouTube 与 GitHub 提供实时双语对照翻译：无限滚动增量翻译、动态 DOM 复用感知、YouTube 字幕实时翻译；GitHub 界面文案走本地词典、技术术语保持原样。",
   "minimum_chrome_version": "116",
   "permissions": [
     "storage",
