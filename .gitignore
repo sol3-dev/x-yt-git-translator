@@ -1,0 +1,18 @@
+# 依赖
+node_modules/
+
+# 测试产物（每次跑都会重新生成，不进版本库）
+test/shots/
+test/shot-*.png
+test/labels.html
+test/report.json
+*.log
+
+# 系统垃圾
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 本地私有配置（万一以后放了 key / token）
+.env
+*.local
