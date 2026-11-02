@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header class="head">
+      <div class="brand">
+        <div class="logo">译</div>
+        <div class="titles">
+          <h1>X / YouTube 双语翻译</h1>
+          <p id="status" class="status">正在检测页面…</p>
+        </div>
+      </div>
+      <label class="switch" title="总开关（Alt+T）">
+        <input type="checkbox" id="enabled" />
+        <span class="slider"></span>
+      </label>
+    </header>
+
+    <section class="card" id="siteCard" hidden>
+      <div class="row">
+        <label id="siteLabel">当前网站</label>
+        <button class="btn-sm" id="toggleSite">翻译此网站</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="row">
+        <label for="engine">翻译引擎</label>
+        <select id="engine">
+          <option value="auto">自动（推荐）</option>
+          <option value="mymemory">MyMemory（免费）</option>
+          <option value="google">Google（需代理）</option>
+          <option value="openai">OpenAI 兼容</option>
+          <option value="builtin">Chrome 内置</option>
+        </select>
+      </div>
+      <p class="hint" id="engineHint" hidden></p>
+
+      <div class="row">
+        <label>网络</label>
+        <div class="probe-wrap">
+          <span class="probe" id="probeText">检测中…</span>
+          <button class="mini" id="reprobe" title="重新探测 Google 可达性">↻</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="targetLang">目标语言</label>
+        <select id="targetLang">
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+          <option value="ko">한국어</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <label>显示方式</label>
+        <div class="segmented" id="modeGroup">
+          <button data-mode="bilingual">对照</button>
+          <button data-mode="inline">追加</button>
+          <button data-mode="replace">替换</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats" id="stats">
+      <div class="stat">
+        <span class="num" id="cntBoxes">0</span>
+        <span class="lbl">已翻译</span>
+      </div>
+      <div class="stat">
+        <span class="num" id="cntReq">0</span>
+        <span class="lbl">请求次数</span>
+      </div>
+      <div class="stat">
+        <span class="num" id="cntFail">0</span>
+        <span class="lbl">失败</span>
+      </div>
+    </section>
+    <p class="hint src-line" id="engineUse" hidden></p>
+
+    <div class="health" id="health" hidden>
+      <span id="healthText"></span>
+      <button class="linkbtn" id="healthRetry">立即重试</button>
+    </div>
+
+    <footer class="foot">
+      <button id="rescan" class="ghost">重新扫描本页</button>
+      <button id="openOptions" class="ghost">详细设置</button>
+    </footer>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

@@ -1,0 +1,374 @@
+:root {
+  --bg: #ffffff;
+  --bg-soft: #f5f6f8;
+  --fg: #16181c;
+  --fg-dim: #6b7280;
+  --line: #e5e7eb;
+  --accent: #1d9bf0;
+  --accent-fg: #ffffff;
+  --radius: 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16181c;
+    --bg-soft: #22262c;
+    --fg: #e7e9ea;
+    --fg-dim: #8b98a5;
+    --line: #2f3336;
+    --accent: #1d9bf0;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  width: 340px;
+  margin: 0;
+  padding: 14px;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans SC', 'Microsoft YaHei', system-ui, sans-serif;
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.logo {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #1d9bf0, #7856ff);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: -0.5px;
+}
+
+.titles h1 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: -0.1px;
+  white-space: nowrap;
+}
+
+.status {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: var(--fg-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.status.active {
+  color: #00ba7c;
+}
+.status.inactive {
+  color: #f4212e;
+}
+
+/* 开关 */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 42px;
+  height: 24px;
+  flex: 0 0 42px;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  background: var(--line);
+  border-radius: 999px;
+  transition: background 0.18s;
+}
+.slider::before {
+  content: '';
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  top: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.18s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+.switch input:checked + .slider {
+  background: var(--accent);
+}
+.switch input:checked + .slider::before {
+  transform: translateX(18px);
+}
+
+/* 卡片 */
+.card {
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 4px 12px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+}
+.row:last-child {
+  border-bottom: none;
+}
+
+/* 「自动」模式下实际会按什么顺序挑引擎 —— 最常被问的就是这个 */
+.hint {
+  margin: 0 0 9px;
+  padding: 0;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--fg-dim);
+}
+.hint b {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+/* 「本页译文来源」独立成行，和统计卡片拉开一点距离 */
+.src-line {
+  margin: 4px 2px 10px;
+  text-align: center;
+}
+
+.row > label {
+  color: var(--fg-dim);
+  font-size: 12px;
+  flex: 0 0 auto;
+}
+
+select {
+  flex: 1;
+  min-width: 0;
+  max-width: 185px;
+  padding: 5px 8px;
+  border-radius: 7px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+}
+select:focus {
+  border-color: var(--accent);
+}
+
+.segmented {
+  display: flex;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 2px;
+  gap: 2px;
+}
+.segmented button {
+  border: none;
+  background: transparent;
+  color: var(--fg-dim);
+  font-size: 11px;
+  font-family: inherit;
+  padding: 4px 9px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.segmented button:hover {
+  color: var(--fg);
+}
+.segmented button.on {
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-weight: 600;
+}
+
+/* 统计 */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 12px 0;
+}
+.stat {
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 8px 4px;
+  text-align: center;
+}
+.stat .num {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+.stat .lbl {
+  display: block;
+  margin-top: 2px;
+  font-size: 10px;
+  color: var(--fg-dim);
+}
+
+/* 引擎健康提示 */
+.health {
+  margin: 0 0 12px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  background: color-mix(in srgb, #f59e0b 14%, transparent);
+  border: 1px solid color-mix(in srgb, #f59e0b 45%, var(--line));
+  color: var(--fg);
+}
+
+/* 「立即重试」——换节点 / 换 Key 之后用来清掉引擎冷却 */
+.linkbtn {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  color: var(--accent, #2563eb);
+  text-decoration: underline;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.linkbtn:hover {
+  opacity: 0.75;
+}
+.linkbtn[disabled] {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* 网络探测行 */
+.probe-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.probe {
+  font-size: 11.5px;
+  color: var(--fg-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.probe.ok {
+  color: #00ba7c;
+}
+.probe.bad {
+  color: #f59e0b;
+}
+.mini {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--fg-dim);
+  font-size: 12px;
+  line-height: 1;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.mini:hover {
+  color: var(--fg);
+  border-color: var(--accent);
+}
+
+/* 「翻译此网站」按钮 */
+.btn-sm {
+  flex: 0 0 auto;
+  padding: 5px 11px;
+  border-radius: 7px;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-size: 11.5px;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.btn-sm:hover {
+  filter: brightness(1.08);
+}
+.btn-sm.on {
+  background: transparent;
+  border-color: var(--line);
+  color: var(--fg-dim);
+  font-weight: 400;
+}
+.btn-sm.on:hover {
+  color: #f4212e;
+  border-color: #f4212e;
+}
+
+/* 底部 */
+.foot {
+  display: flex;
+  gap: 8px;
+}
+.ghost {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--fg);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.ghost:hover {
+  background: var(--bg-soft);
+}

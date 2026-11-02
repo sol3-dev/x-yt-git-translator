@@ -1,0 +1,74 @@
+{
+  "manifest_version": 3,
+  "name": "X / YouTube / GitHub 双语翻译",
+  "version": "1.2.10",
+  "description": "为 X（Twitter）、YouTube 与 GitHub 提供实时双语对照翻译：无限滚动增量翻译、动态 DOM 复用感知、YouTube 字幕实时翻译；GitHub 界面文案走本地词典、技术术语保持原样。",
+  "minimum_chrome_version": "116",
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "offscreen",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "src/background/service-worker.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://x.com/*", "https://twitter.com/*"],
+      "js": ["src/content/shared.js", "src/content/x.js"],
+      "css": ["src/content/content.css"],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": ["https://www.youtube.com/*", "https://m.youtube.com/*"],
+      "js": ["src/content/shared.js", "src/content/youtube.js"],
+      "css": ["src/content/content.css"],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": ["https://github.com/*", "https://gist.github.com/*"],
+      "js": ["src/content/shared.js", "src/content/github.js"],
+      "css": ["src/content/content.css"],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["src/content/shared.js", "src/content/generic.js"],
+      "css": ["src/content/content.css"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "action": {
+    "default_popup": "src/popup/popup.html",
+    "default_title": "X / YouTube 双语翻译",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "src/options/options.html",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "commands": {
+    "toggle-translate": {
+      "suggested_key": { "default": "Alt+T" },
+      "description": "开启 / 关闭当前页面的自动翻译"
+    }
+  }
+}

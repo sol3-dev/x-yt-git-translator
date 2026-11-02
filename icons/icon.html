@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: transparent;
+      }
+      .box {
+        position: absolute;
+        left: 0;
+        top: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #1d9bf0 0%, #5b6cff 55%, #7856ff 100%);
+        color: #ffffff;
+        font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+        font-weight: 700;
+        line-height: 1;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box" id="b">译</div>
+    <script>
+      const size = parseFloat(new URLSearchParams(location.search).get('s') || '128');
+      const ratio = size <= 24 ? 0.8 : size <= 48 ? 0.72 : 0.62;
+      const el = document.getElementById('b');
+      el.style.width = size + 'px';
+      el.style.height = size + 'px';
+      el.style.fontSize = size * ratio + 'px';
+      el.style.borderRadius = (size <= 24 ? 18 : 22) + '%';
+    </script>
+  </body>
+</html>

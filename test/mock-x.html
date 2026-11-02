@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>X timeline mock</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      body {
+        margin: 0;
+        background: #000;
+        color: #e7e9ea;
+        font-family: -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      }
+      main {
+        max-width: 600px;
+        margin: 0 auto;
+        border-left: 1px solid #2f3336;
+        border-right: 1px solid #2f3336;
+        min-height: 100vh;
+      }
+      article[data-testid='tweet'] {
+        padding: 12px 16px;
+        border-bottom: 1px solid #2f3336;
+      }
+      [data-testid='User-Name'] {
+        font-weight: 700;
+        font-size: 15px;
+        margin-bottom: 4px;
+      }
+      [data-testid='User-Name'] span {
+        color: #71767b;
+        font-weight: 400;
+        margin-left: 4px;
+      }
+      [data-testid='tweetText'] {
+        font-size: 15px;
+        line-height: 20px;
+        white-space: pre-wrap;
+        overflow-wrap: break-word;
+        color: #e7e9ea;
+      }
+      .bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 9999;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        padding: 6px 12px;
+        background: #16181c;
+        border-bottom: 1px solid #2f3336;
+        font-size: 12px;
+        color: #8b98a5;
+        font-family: monospace;
+      }
+      .bar button {
+        background: #1d9bf0;
+        color: #fff;
+        border: none;
+        border-radius: 999px;
+        padding: 4px 12px;
+        font-size: 12px;
+        cursor: pointer;
+      }
+      .bar b {
+        color: #e7e9ea;
+      }
+      main {
+        padding-top: 34px;
+      }
+      .sentinel {
+        height: 1px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bar">
+      <span>tweets: <b id="statCount">0</b></span>
+      <span>translations: <b id="statTr">0</b></span>
+      <span>reuse-gen: <b id="statGen">0</b></span>
+      <button id="btnReuse">模拟节点复用</button>
+    </div>
+
+    <main id="feed"></main>
+    <div class="sentinel" id="sentinel"></div>
+
+    <script>
+      const FEED = [
+        'Just shipped a new feature that lets you schedule posts across multiple accounts. The scheduler runs entirely on the client, no server round trip. Super proud of this one.',
+        'The problem with most "AI agents" today is they are demos pretending to be products. Real agents need memory, retries, and observability before they need a personality.',
+        'Hot take: the best debugging tool is still a well placed console.log. Fight me.',
+        // ↓ 印地语混在第一批里：模拟「时间线上突然出现本地模型没下过的语言」。
+        //   修复前这一条会让整批 10 条一起被丢弃，并把本地引擎冷却 30 分钟 ——
+        //   看到的就是「突然整页都不翻了，但设置页说模型已就绪」。
+        'खबर आ रही है कि अरुणाचल में घुसपैठ कर रहे चीनी सैनिकों को वहां के लोकल लोगों ने खदेड़ दिया है।',
+        'We rewrote our rendering pipeline and cut frame time by 40%. Turns out the bottleneck was a single resize observer firing on every scroll event.',
+        'Reading the source of a library you depend on is the highest leverage thing you can do as an engineer. You will find bugs your tests never will.',
+        'Reminder that "it works on my machine" is a legitimate bug report, not an excuse. Containerize the machine.',
+        'Spent three hours chasing a memory leak. It was an event listener on window that never got removed. Every time.',
+        'The best code review comment is a question, not a command. "What happens if this is null?" beats "add a null check".',
+        'Our CI went from 18 minutes to 4 by caching the dependency layer properly. Nobody wanted to do it because it was boring. Boring wins.',
+        'Type safety is not about catching typos. It is about making illegal states unrepresentable in the first place.',
+        'If your onboarding docs are six months old, you do not have onboarding docs. You have folklore.',
+        'Shipped a fix for the infinite scroll jank. The root cause was that we were re-creating the intersection observer on every render.',
+        'People underestimate how much performance work is just deleting code. The fastest function is the one you never call.',
+        'A design system without usage guidelines is just a component library with extra steps.',
+        'The hardest part of distributed systems is not consensus. It is convincing everyone that partial failure is normal.'
+      ];
+
+      const feed = document.getElementById('feed');
+      let cursor = 0;
+      let reuseGen = 0;
+      const nodes = []; // 复用的 article 池
+
+      function detectMockLang(text) {
+        // 天城文 → 印地语。加这几条是为了覆盖真实场景：
+        // X 时间线上混着多国语言，其中某几种本地模型可能没下载。
+        if (/[\u0900-\u097F]/.test(text)) return 'hi';
+        if (/[\u0600-\u06FF]/.test(text)) return 'fa';
+        return 'en';
+      }
+
+      function makeArticle(text, index) {
+        const art = document.createElement('article');
+        art.setAttribute('data-testid', 'tweet');
+        art.setAttribute('role', 'article');
+        const lang = detectMockLang(text);
+        art.innerHTML = `
+          <div data-testid="User-Name">user_${index}<span>@handle_${index} · 2h</span></div>
+          <div data-testid="tweetText" lang="${lang}" dir="auto"></div>
+        `;
+        setText(art, text);
+        return art;
+      }
+
+      function setText(art, text) {
+        const el = art.querySelector('[data-testid="tweetText"]');
+        // 真实 X 的正文是 span 包裹的
+        el.textContent = '';
+        const span = document.createElement('span');
+        span.textContent = text;
+        el.appendChild(span);
+      }
+
+      function push(count) {
+        for (let i = 0; i < count && cursor < FEED.length; i++, cursor++) {
+          const art = makeArticle(FEED[cursor], cursor);
+          feed.appendChild(art);
+          nodes.push(art);
+        }
+        updateStats();
+      }
+
+      // 模拟 X 的虚拟滚动：把 DOM 节点从头部移走，复用到尾部显示新内容
+      function reuseNode() {
+        if (!nodes.length) return;
+        const art = nodes.shift();
+        const nextIndex = cursor < FEED.length ? cursor : 0;
+        const text = FEED[nextIndex] + ` [reuse #${++reuseGen}]`;
+        cursor = (cursor + 1) % FEED.length;
+        setText(art, text);
+        feed.appendChild(art);
+        nodes.push(art);
+        updateStats();
+      }
+
+      function updateStats() {
+        document.getElementById('statCount').textContent = feed.children.length;
+        document.getElementById('statTr').textContent =
+          document.querySelectorAll('#feed .xt-translation').length;
+        document.getElementById('statGen').textContent = reuseGen;
+      }
+
+      document.getElementById('btnReuse').addEventListener('click', reuseNode);
+
+      // 首屏
+      push(6);
+
+      // 滚动到底部时追加（模拟无限滚动）
+      const sentinel = document.getElementById('sentinel');
+      let loading = false;
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (!e.isIntersecting || loading) continue;
+            loading = true;
+            setTimeout(() => {
+              push(5);
+              loading = false;
+            }, 350);
+          }
+        },
+        { rootMargin: '200px' }
+      );
+      io.observe(sentinel);
+
+      setInterval(updateStats, 500);
+
+      // 供自动化测试读取状态
+      window.__mock = {
+        total: () => cursor,
+        nodes: () => nodes.length,
+        reuse: reuseNode,
+        stats: () => ({
+          tweets: feed.children.length,
+          translations: document.querySelectorAll('#feed .xt-translation').length,
+          reuseGen
+        })
+      };
+    </script>
+  </body>
+</html>

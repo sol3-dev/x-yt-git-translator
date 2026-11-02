@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mock Blog Post</title>
+    <style>
+      body { font-family: system-ui, sans-serif; max-width: 760px; margin: 0 auto; padding: 20px; color: #16181c; }
+      nav a { margin-right: 14px; }
+      nav, header, footer, aside { color: #6b7280; }
+      article p { line-height: 1.7; }
+      .short { color: #999; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">The Sample Journal</div>
+      <nav>
+        <a href="/">Home</a>
+        <a href="/about">About us</a>
+        <a href="/archive">Archive</a>
+        <a href="/contact">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <article>
+        <h1>Why incremental rendering breaks naive translation extensions</h1>
+
+        <p>
+          Modern web applications rarely reload the whole document when you navigate. Instead they
+          patch the existing tree, recycle nodes, and stream new content into the same containers.
+          A translation layer that walks the DOM once at page load will therefore miss everything
+          that arrives later.
+        </p>
+
+        <p>
+          The harder problem is node reuse. A single article element that you already translated may
+          be reassigned to display a completely different record a second later. If your asynchronous
+          translation resolves after that swap, the result lands on the wrong element.
+        </p>
+
+        <p class="short">Too short.</p>
+
+        <p>
+          The fix is cheap: before writing the translation, verify that the source text of the host
+          still matches what you originally sent, and that the node is still attached to the document.
+        </p>
+
+        <button id="subscribe">Subscribe to the newsletter</button>
+
+        <blockquote>
+          Any sufficiently complicated content script contains an ad hoc, informally specified
+          implementation of a diffing algorithm.
+        </blockquote>
+      </article>
+
+      <aside>
+        <p>Related reading on performance and accessibility in modern browsers.</p>
+      </aside>
+    </main>
+
+    <footer>
+      <p>Copyright 2026 The Sample Journal. All rights reserved worldwide.</p>
+    </footer>
+  </body>
+</html>

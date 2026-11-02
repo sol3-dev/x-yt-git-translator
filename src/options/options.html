@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>X / YouTube 双语翻译 · 设置</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="hero">
+        <div class="logo">译</div>
+        <div>
+          <h1>X / YouTube 双语翻译</h1>
+          <p class="sub">实时增量翻译 · 支持无限滚动与动态节点复用</p>
+        </div>
+        <span class="ver" id="ver"></span>
+      </header>
+
+      <!-- 常规 -->
+      <section class="block">
+        <h2>常规</h2>
+
+        <div class="field">
+          <div class="label">
+            <span>启用自动翻译</span>
+            <small>关闭后所有页面立即停止翻译并移除译文</small>
+          </div>
+          <label class="switch"><input type="checkbox" id="enabled" /><span class="slider"></span></label>
+        </div>
+
+        <div class="field">
+          <div class="label"><span>翻译引擎</span><small id="engineHint">无需配置，开箱可用</small></div>
+          <select id="engine">
+            <option value="auto">自动（依次尝试可用引擎）</option>
+            <option value="mymemory">MyMemory（免费 / 国内直连）</option>
+            <option value="google">Google 翻译（免费 / 需要代理）</option>
+            <option value="openai">OpenAI 兼容接口（自带 Key）</option>
+            <option value="builtin">Chrome 内置本地翻译</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <div class="label"><span>目标语言</span></div>
+          <select id="targetLang">
+            <option value="zh-CN">简体中文</option>
+            <option value="zh-TW">繁體中文</option>
+            <option value="en">English</option>
+            <option value="ja">日本語</option>
+            <option value="ko">한국어</option>
+            <option value="fr">Français</option>
+            <option value="de">Deutsch</option>
+            <option value="es">Español</option>
+            <option value="ru">Русский</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <div class="label">
+            <span>显示方式</span>
+            <small>对照：原文 + 译文；追加：紧贴原文；替换：只留译文</small>
+          </div>
+          <div class="segmented" id="modeGroup">
+            <button data-mode="bilingual">双语对照</button>
+            <button data-mode="inline">行内追加</button>
+            <button data-mode="replace">替换原文</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="label">
+            <span>跳过已是目标语言的内容</span>
+            <small>避免把中文推文再翻一遍</small>
+          </div>
+          <label class="switch"><input type="checkbox" id="skipSameLang" /><span class="slider"></span></label>
+        </div>
+      </section>
+
+      <!-- X -->
+      <section class="block">
+        <h2>X（Twitter）</h2>
+
+        <div class="field">
+          <div class="label">
+            <span>启用 X 翻译</span>
+            <small>推文正文，滚动加载的新推文自动翻译</small>
+          </div>
+          <label class="switch"><input type="checkbox" id="xEnabled" /><span class="slider"></span></label>
+        </div>
+
+        <div class="field sub-field">
+          <div class="label"><span>个人主页简介</span><small>资料页的 bio</small></div>
+          <label class="switch"><input type="checkbox" id="xProfile" /><span class="slider"></span></label>
+        </div>
+      </section>
+
+      <!-- YouTube -->
+      <section class="block">
+        <h2>YouTube</h2>
+
+        <div class="field">
+          <div class="label"><span>启用 YouTube 翻译</span><small>下列各项的总开关</small></div>
+          <label class="switch"><input type="checkbox" id="ytEnabled" /><span class="slider"></span></label>
+        </div>
+
+        <div class="field sub-field">
+          <div class="label"><span>视频标题</span></div>
+          <label class="switch"><input type="checkbox" id="ytTitle" /><span class="slider"></span></label>
+        </div>
+
+        <div class="field sub-field">
+          <div class="label"><span>视频简介</span></div>
+          <label class="switch"><input type="checkbox" id="ytDesc" /><span class="slider"></span></label>
+        </div>
+
+        <div class="field sub-field">
+          <div class="label"><span>评论</span><small>滚动加载的评论同步翻译</small></div>
+          <label class="switch"><input type="checkbox" id="ytComments" /><span class="slider"></span></label>
+        </div>
+
+        <div class="field sub-field">
+          <div class="label"><span>视频卡片标题</span><small>首页 / 搜索 / 推荐列表</small></div>
+          <label class="switch"><input type="checkbox" id="ytCards" /><span class="slider"></span></label>
+        </div>
+
+        <div class="field sub-field">
+          <div class="label">
+            <span>实时字幕</span>
+            <small>需要视频本身已打开字幕（含自动生成）</small>
+          </div>
+          <label class="switch"><input type="checkbox" id="ytCaptions" /><span class="slider"></span></label>
+        </div>
+
+        <div class="field sub-field">
+          <div class="label"><span>字幕字号</span><small id="capSizeVal">24 px</small></div>
+          <input type="range" id="ytCaptionSize" min="14" max="48" step="1" />
+        </div>
+      </section>
+
+      <!-- GitHub -->
+      <section class="block">
+        <h2>GitHub</h2>
+        <p class="note">
+          GitHub 不是阅读站，界面是一堆产品文案。所以这里分两套做法：<br />
+          · <strong>界面文案</strong>（左侧导航、账号菜单、仓库页签、按钮）走<b>本地词典</b> ——
+          零请求、零延迟、术语统一，翻不中的保持英文，不会出现「Home → 家」这类机翻。<br />
+          · <strong>阅读内容</strong>（仓库简介、README、Issue / PR 正文）走模型，双语对照，
+          并在提示词里固定「技术名词不译」：C++、Rust、Zig、Kubernetes、API、PR 等保持原样。
+        </p>
+        <div class="field">
+          <div class="label"><span>启用 GitHub 翻译</span><small>下列各项的总开关</small></div>
+          <label class="switch"><input type="checkbox" id="ghEnabled" /><span class="slider"></span></label>
+        </div>
+
+        <div class="field sub-field">
+          <div class="label">
+            <span>界面文案</span>
+            <small>导航 / 菜单 / 按钮，本地词典替换</small>
+          </div>
+          <label class="switch"><input type="checkbox" id="ghMenu" /><span class="slider"></span></label>
+        </div>
+
+        <div class="field sub-field">
+          <div class="label">
+            <span>README 与简介</span>
+            <small>走模型，术语保持原样</small>
+          </div>
+          <label class="switch"><input type="checkbox" id="ghReadme" /><span class="slider"></span></label>
+        </div>
+
+        <div class="field sub-field">
+          <div class="label">
+            <span>提交信息</span>
+            <small>文件列表右侧的「最近提交信息」列，走模型</small>
+          </div>
+          <label class="switch"><input type="checkbox" id="ghCommits" /><span class="slider"></span></label>
+        </div>
+      </section>
+
+      <!-- 其它网站 -->
+      <section class="block">
+        <h2>其它网站</h2>
+        <p class="note">
+          在任意网站页面点扩展图标 → <strong>「翻译此网站」</strong>即可添加，添加后访问该域名会自动翻译。
+          通用识别靠段落结构判断正文，导航与按钮一般不会误翻，但排版特殊的站点可能翻不全。
+          像 Google Docs、Notion、Figma 这类画布型编辑器没有可读文本节点，加了也翻不出来。
+        </p>
+        <div class="site-list" id="siteList"></div>
+        <p class="note" id="siteEmpty">还没有添加任何网站。</p>
+      </section>
+
+      <section class="block">
+        <h2>Chrome 内置本地翻译</h2>
+        <p class="note">
+          使用 Chrome 自带的设备端翻译模型：<b>完全离线、不限额度、不经过任何服务器</b>，
+          因此也不受代理节点 IP 被 Google 风控的影响。<br />
+          每个语言对是独立的模型文件，首次使用必须由你点击触发下载（浏览器规定）。
+          点一次下面的按钮会自动探测浏览器支持的全部语言并逐个拉下来（约 30 种，
+          不支持的自动跳过，已下载的不会重复下），约需 1~2 分钟。
+        </p>
+        <div class="actions">
+          <button class="btn" id="downloadModel">下载 / 检查全部本地模型</button>
+        </div>
+        <pre class="result" id="modelStatus"></pre>
+      </section>
+
+      <!-- 引擎配置 -->
+      <section class="block" id="openaiBlock">
+        <h2>OpenAI 兼容接口</h2>
+        <p class="note">
+          支持 OpenAI、DeepSeek、通义千问、本地 Ollama / llama.cpp 等任何兼容
+          <code>/chat/completions</code> 的服务。一次请求翻译整批内容，质量最好。
+        </p>
+
+        <p class="note ds-tip">
+          <strong>用 DeepSeek 的话：</strong>Base URL 填 <code>https://api.deepseek.com</code>，
+          模型填 <code>deepseek-flash</code>（便宜、够用）或 <code>deepseek-v4-pro</code>（更准）。
+          扩展检测到 DeepSeek 会自动关闭思考模式——不关的话每次请求会多算几百个推理 token，
+          又慢又贵，而翻译根本不需要推理。
+        </p>
+
+        <div class="field col">
+          <div class="label"><span>Base URL</span></div>
+          <input type="text" id="oaBase" placeholder="https://api.openai.com/v1" />
+        </div>
+
+        <div class="field col">
+          <div class="label"><span>API Key</span><small>仅保存在本机浏览器，不会上传</small></div>
+          <input type="password" id="oaKey" placeholder="sk-..." autocomplete="off" />
+        </div>
+
+        <div class="field col">
+          <div class="label"><span>模型</span></div>
+          <input type="text" id="oaModel" placeholder="gpt-4o-mini" />
+        </div>
+
+        <div class="actions">
+          <button class="btn" id="grantOrigin">检查该域名授权</button>
+          <button class="btn primary" id="testEngine">测试当前引擎</button>
+        </div>
+        <pre class="result" id="testResult"></pre>
+      </section>
+
+      <!-- 数据 -->
+      <section class="block">
+        <h2>数据</h2>
+        <div class="field">
+          <div class="label">
+            <span>翻译缓存</span>
+            <small>缓存已翻译内容，避免重复请求上游接口</small>
+          </div>
+          <div class="actions-inline">
+            <span class="pill" id="cacheCount">—</span>
+            <button class="btn danger" id="clearCache">清空缓存</button>
+          </div>
+        </div>
+      </section>
+
+      <footer class="foot">
+        <span id="saveState">设置会自动保存</span>
+        <span>快捷键 Alt+T 切换开关</span>
+      </footer>
+    </div>
+
+    <script src="options.js"></script>
+  </body>
+</html>

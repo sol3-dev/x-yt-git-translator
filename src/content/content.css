@@ -1,0 +1,312 @@
+/* =========================================================================
+ * XT 译文样式
+ * 原则：只作用于带 .xt-* 类名的节点，绝不污染宿主页面已有样式。
+ * 颜色一律继承或使用中性灰，保证在 X / YouTube 的亮暗两套主题下都可读。
+ * ========================================================================= */
+
+.xt-translation {
+  display: block !important;
+  box-sizing: border-box;
+  margin: 6px 0 0 0;
+  padding: 6px 0 0 0;
+  border-top: 1px solid rgba(128, 128, 128, 0.28);
+  color: inherit;
+  opacity: 0.92;
+  font-size: 0.96em;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: normal;
+  text-align: start;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  unicode-bidi: isolate;
+  font-family: inherit;
+  transition: opacity 0.15s ease;
+}
+
+/* ------------------------------ X ------------------------------ */
+
+[data-testid='tweetText'] > .xt-translation {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* --------------------------- 显示模式 --------------------------- */
+
+/* 行内追加：去掉分割线，紧贴原文 */
+[data-xt-mode='inline'] > .xt-translation {
+  border-top: none;
+  margin-top: 2px;
+  padding-top: 0;
+  opacity: 0.84;
+  font-size: 0.94em;
+}
+
+/* 替换原文：把 host 字号压到 0，只让译文恢复字号，
+   这样纯文本节点也会一起被"隐藏"，且不必移动任何 DOM。 */
+[data-xt-mode='replace'] {
+  font-size: 0 !important;
+}
+[data-xt-mode='replace'] > .xt-translation {
+  font-size: var(--xt-fs, 15px) !important;
+  border-top: none;
+  margin-top: 0;
+  padding-top: 0;
+  opacity: 1;
+}
+
+/* --------------------------- YouTube --------------------------- */
+
+.xt-yt-title {
+  /* #title-row 可能是 flex 布局，这里强制独占一行 */
+  flex: 1 0 100%;
+  width: 100%;
+  margin-top: 6px;
+  padding-top: 0;
+  border-top: none;
+  font-family: 'Roboto', 'Noto Sans SC', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--yt-spec-text-primary, inherit);
+  opacity: 0.88;
+}
+
+.xt-yt {
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px dashed rgba(128, 128, 128, 0.25);
+  font-family: 'Roboto', 'Noto Sans SC', system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--yt-spec-text-primary, inherit);
+}
+
+/* 卡片标题：限制两行，避免把缩略图卡片撑变形 */
+.xt-yt-card {
+  margin-top: 2px;
+  padding-top: 0;
+  border-top: none;
+  font-family: 'Roboto', 'Noto Sans SC', system-ui, sans-serif;
+  font-size: 12px;
+  line-height: 1.35;
+  font-weight: 400;
+  color: var(--yt-spec-text-secondary, rgba(128, 128, 128, 0.95));
+  opacity: 0.95;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Shorts 卡片：宽度只有 ~150px，标题原文本身也截成 2 行。
+   译文用更小的字号 + 限 2 行，避免把整排骨牌撑得高低不齐；
+   全文靠 title 属性（悬停原生提示）兜住。 */
+.xt-yt-shorts {
+  font-size: 11.5px !important;
+  line-height: 1.3;
+  margin-top: 3px;
+  -webkit-line-clamp: 2;
+  opacity: 0.9;
+}
+
+/* Shorts 播放页标题译文：叠在竖屏播放器里，背景是深色的，
+   所以不画分割线、颜色跟随宿主（白字），限 2 行免得挡住视频。 */
+.xt-yt-shorts-title {
+  margin-top: 4px;
+  padding-top: 0;
+  border-top: none;
+  font-family: 'Roboto', 'Noto Sans SC', system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  color: inherit;
+  opacity: 0.92;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* --------------------------- 字幕浮层 --------------------------- */
+
+.xt-caption-overlay {
+  position: absolute;
+  left: 50%;
+  bottom: 13%;
+  transform: translateX(-50%);
+  z-index: 60;
+  max-width: 78%;
+  padding: 2px 10px;
+  border-radius: 4px;
+  background: rgba(8, 8, 8, 0.72);
+  color: #fff;
+  font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+  font-size: var(--xt-cap-size, 24px);
+  font-weight: 500;
+  line-height: 1.35;
+  text-align: center;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.9);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+.xt-caption-overlay.xt-visible {
+  opacity: 1;
+}
+
+/* =========================================================================
+ * 源语言标签（悬停显示）
+ * -------------------------------------------------------------------------
+ * 用 ::after + content:attr(data-xt-lang) 而不是往 DOM 里塞 span，好处是：
+ *   1. 伪元素内容不参与选区 —— 你选中译文复制时拿到的是干净的纯译文，
+ *      不会变成「译自 英语 This is the translation」。
+ *   2. 不改变 textContent，脚本和页面自身的逻辑都不受影响。
+ *   3. 不占布局空间，悬停才淡入，离开就消失。
+ * ========================================================================= */
+
+.xt-translation[data-xt-lang] {
+  position: relative;
+}
+
+.xt-translation[data-xt-lang]::after {
+  content: attr(data-xt-lang);
+  position: absolute;
+  /* 贴在分割线（.xt-translation 的 border-top）的**开头**，像给这条线加了个标签。
+     旧版是 right:0 贴在行尾，离原文渐远、也不好在扫读时第一时间看到。
+     top 取 -0.62em 让标签「跨」在线上：整块只占上下各 7px 左右，
+     既不会压到上一行原文的字尾，也不会顶到译文第一行的字头。 */
+  top: -0.62em;
+  left: 0;
+  z-index: 2;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(127, 127, 127, 0.16);
+  color: rgba(127, 127, 127, 0.98);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(2px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.xt-translation[data-xt-lang]:hover::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 行内追加 / 替换原文这两种模式**没有分割线**，标签没地方挂；
+   硬画在框内就会压住译文第一行（原来 top:0 就是这么压的）。
+   一概不画，改走 title 原生提示（见 shared.js render()）。 */
+[data-xt-mode='inline'] > .xt-translation[data-xt-lang]::after,
+[data-xt-mode='replace'] > .xt-translation[data-xt-lang]::after {
+  content: none;
+}
+
+/* YouTube 的标题 / 卡片：四周没有空白可用 ——
+   卡片只有 150~250px 宽、标题本身还限 2 行，标签画在哪儿都会压住译文；
+   标题译文又没有分割线可以挂。
+   这类容器**不画标签**，改用 title 属性让浏览器在光标旁浮出（见 youtube.js），
+   永不遮挡正文，也不引起任何布局跳动。 */
+.xt-yt-card[data-xt-lang]::after,
+.xt-yt-title[data-xt-lang]::after,
+.xt-yt-shorts-title[data-xt-lang]::after {
+  content: none;
+}
+
+/* 深色主题下用更亮的灰，避免糊在背景里 */
+@media (prefers-color-scheme: dark) {
+  .xt-translation[data-xt-lang]::after {
+    background: rgba(200, 200, 200, 0.18);
+    color: rgba(230, 230, 230, 0.95);
+  }
+}
+
+/* =========================================================================
+ * GitHub
+ * -------------------------------------------------------------------------
+ * README 的译文是「块内追加」，会继承标题/列表的字号，必须按宿主压回来，
+ * 否则 h1 下面那行中文会和标题一样大，整页像被放大镜卡住。
+ * ========================================================================= */
+.xt-gh-md {
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px dashed rgba(128, 128, 128, 0.28);
+  font-size: 0.95em;
+  line-height: 1.65;
+  font-weight: 400;
+  opacity: 0.95;
+  white-space: pre-wrap;
+}
+
+/* 标题里的译文统一成正文大小，不然 h1 > div 会变成第二个大标题 */
+.xt-gh-md.xt-h1,
+.xt-gh-md.xt-h2,
+.xt-gh-md.xt-h3,
+.xt-gh-md.xt-h4 {
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  letter-spacing: normal !important;
+  line-height: 1.6 !important;
+}
+
+/* GitHub 的 markdown 里 li 的译文别再加缩进 */
+li > .xt-gh-md {
+  margin-left: 0;
+}
+
+/* 纯文本 README 的译文块：不要等宽字体，否则中文排得像代码 */
+.xt-gh-plain {
+  font-family: -apple-system, 'Segoe UI', 'Noto Sans SC', sans-serif;
+}
+
+/* 议题 / PR 列表标题的译文：紧跟在标题下面，别抢视线 */
+.xt-gh-issue {
+  margin-top: 4px;
+  padding-top: 0;
+  border-top: none;
+  font-family: -apple-system, 'Segoe UI', 'Noto Sans SC', sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--fgColor-muted, #59636e);
+  opacity: 0.95;
+}
+
+/* 提交信息的译文：文件列表「最近提交信息」那一列只有 200~300px 宽，
+   而字号和原文相近会显得压过原文，所以压小一号、限两行，
+   长句靠 title 悬停看全文（见 github.js renderCommitMsg）。 */
+.xt-gh-commit {
+  margin-top: 2px;
+  padding-top: 0;
+  border-top: none;
+  font-family: -apple-system, 'Segoe UI', 'Noto Sans SC', sans-serif;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--fgColor-muted, #59636e);
+  opacity: 0.95;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 仓库列表里的单行简介：比 README 段落轻，别用虚线分割线压得太重 */
+li [itemprop='description'] + .xt-translation,
+li p[itemprop='description'] + .xt-gh-md {
+  border-top: none;
+  margin-top: 2px;
+  padding-top: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  opacity: 0.9;
+}
