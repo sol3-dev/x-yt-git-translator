@@ -1,0 +1,7 @@
+# 文本文件统一 LF，避免 Windows / macOS 之间来回转换产生整文件 diff
+* text=auto eol=lf
+
+# 图片按二进制处理
+*.png binary
+*.jpg binary
+*.ico binary
